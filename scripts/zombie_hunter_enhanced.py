@@ -16,12 +16,23 @@ Usage:
   python zombie_hunter_enhanced.py --dry-run --min-confidence HIGH
 """
 
+import sys
 import boto3
 import argparse
 import json
 import datetime
 from datetime import timedelta
 from botocore.exceptions import ClientError
+
+
+# Windows consoles often default to cp1252, which cannot encode the emoji this
+# script prints, raising UnicodeEncodeError mid-run. Force UTF-8 so output never
+# crashes regardless of the host console.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
 
 
 # Configuration

@@ -30,6 +30,16 @@ import boto3
 from botocore.exceptions import BotoCoreError, ClientError
 
 
+# On Windows the console often defaults to cp1252, which cannot encode some
+# characters this script prints, raising UnicodeEncodeError mid-run. Force the
+# streams to UTF-8 so output never crashes regardless of the host console.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
+
+
 DEMO_TAG_KEY = "Project"
 DEMO_TAG_VALUE = "cost-detective-demo"
 
@@ -386,13 +396,13 @@ def main() -> int:
     created["ec2_instance"] = launch_idle_instance(ec2, subnet_id, ami_id)
 
     # --- Summary ---
-    print(f"\n  {'─' * 55}")
+    print(f"\n  {'-' * 55}")
     print(bold("  Summary of created resources:"))
-    print(f"  {'─' * 55}")
+    print(f"  {'-' * 55}")
     for label, rid in created.items():
         status = green(rid) if rid else red("FAILED")
         print(f"    {label:<20} : {status}")
-    print(f"  {'─' * 55}")
+    print(f"  {'-' * 55}")
 
     failures = sum(1 for v in created.values() if v is None)
     if failures:

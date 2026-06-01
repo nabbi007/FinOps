@@ -10,11 +10,22 @@ Usage:
   python cloudtrail_tracker.py --resource-id i-1234567890abcdef --region eu-west-1
 """
 
+import sys
 import boto3
 import argparse
 import json
 from datetime import datetime, timedelta
 from botocore.exceptions import ClientError
+
+
+# Windows consoles often default to cp1252, which cannot encode the emoji this
+# script prints, raising UnicodeEncodeError mid-run. Force UTF-8 so output never
+# crashes regardless of the host console.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
 
 
 def get_last_activity(cloudtrail_client, resource_id, lookback_days=90):
@@ -45,7 +56,7 @@ def get_last_activity(cloudtrail_client, resource_id, lookback_days=90):
             events.extend(page.get('Events', []))
         
         if not events:
-            print(f"   ⚠️  No CloudTrail events found for {resource_id}")
+            print(f"    No CloudTrail events found for {resource_id}")
             return {
                 'resource_id': resource_id,
                 'last_activity_time': None,
@@ -67,7 +78,7 @@ def get_last_activity(cloudtrail_client, resource_id, lookback_days=90):
         
         days_since = (datetime.utcnow() - event_time.replace(tzinfo=None)).days
         
-        print(f"   ✅ Last activity found:")
+        print(f"   Last activity found:")
         print(f"      Event: {event_name}")
         print(f"      Time: {event_time}")
         print(f"      User: {user_name} ({user_type})")
@@ -146,7 +157,7 @@ def get_resource_type(resource_id):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="🕵️ CloudTrail Activity Tracker — Find last API activity for resources"
+        description=" CloudTrail Activity Tracker — Find last API activity for resources"
     )
     parser.add_argument(
         '--resource-id',
@@ -172,7 +183,7 @@ def main():
     args = parser.parse_args()
     
     print("=" * 70)
-    print("🕵️  CLOUDTRAIL ACTIVITY TRACKER")
+    print("  CLOUDTRAIL ACTIVITY TRACKER")
     print(f"   Resource: {args.resource_id}")
     print(f"   Type: {get_resource_type(args.resource_id)}")
     print(f"   Region: {args.region}")
@@ -186,7 +197,7 @@ def main():
     
     # Print summary
     print("\n" + "=" * 70)
-    print("📊 ACTIVITY SUMMARY")
+    print(" ACTIVITY SUMMARY")
     print("=" * 70)
     print(f"  Resource ID:        {result['resource_id']}")
     print(f"  Status:             {result.get('status', 'UNKNOWN')}")
@@ -203,27 +214,27 @@ def main():
     print("=" * 70)
     
     # Recommendation
-    print("\n💡 RECOMMENDATION:")
+    print("\n RECOMMENDATION:")
     confidence = result.get('confidence', 'UNKNOWN')
     
     if confidence == 'HIGH_ZOMBIE_PROBABILITY':
-        print("   ⚠️  HIGH risk of being a zombie resource")
+        print("    HIGH risk of being a zombie resource")
         print("   → Review and consider deletion")
     elif confidence == 'MEDIUM_ZOMBIE_PROBABILITY':
-        print("   ⚠️  MEDIUM risk of being a zombie resource")
+        print("    MEDIUM risk of being a zombie resource")
         print("   → Investigate usage patterns")
     elif confidence == 'LOW_ZOMBIE_PROBABILITY':
-        print("   ✅ LOW risk - resource has recent activity")
+        print("   LOW risk - resource has recent activity")
     elif confidence == 'ACTIVE_RESOURCE':
-        print("   ✅ ACTIVE resource - do not delete")
+        print("   ACTIVE resource - do not delete")
     elif confidence == 'ALREADY_DELETED':
-        print("   ℹ️  Resource was already deleted")
+        print("   ℹ  Resource was already deleted")
     
     # Save to file if requested
     if args.output:
         with open(args.output, 'w') as f:
             json.dump(result, f, indent=2)
-        print(f"\n💾 Results saved to: {args.output}")
+        print(f"\n Results saved to: {args.output}")
 
 
 if __name__ == '__main__':
