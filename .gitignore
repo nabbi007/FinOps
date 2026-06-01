@@ -1,0 +1,61 @@
+# =============================================================================
+# Cost Detective — .gitignore
+# =============================================================================
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- Terraform ----
+# Provider plugins and module cache (re-created by `terraform init`).
+**/.terraform/
+# State files can contain account IDs, resource attributes, and secrets.
+*.tfstate
+*.tfstate.*
+# Crash logs and plan output files.
+crash.log
+crash.*.log
+*.tfplan
+# Variable files often hold environment-specific or sensitive values.
+# Commit a *.tfvars.example template instead of the real file.
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+# NOTE: .terraform.lock.hcl is intentionally NOT ignored — commit it so
+# provider versions are reproducible across machines.
+# Lambda deployment package (rebuilt on every apply).
+terraform/lambda-scanner/build/
+
+# ---- Generated tool output / reports ----
+report*.json
+tagging-report*.json
+decommission-log-*.json
+out.json
+
+# ---- Credentials and keys (never commit) ----
+.aws/
+credentials
+*.pem
+*.key
+
+# ---- Editor / IDE ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.claude/settings.local.json
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+Desktop.ini

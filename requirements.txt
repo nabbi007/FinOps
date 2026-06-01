@@ -1,0 +1,15 @@
+# =============================================================================
+# Cost Detective — AWS FinOps Toolkit
+# Python Dependencies
+# =============================================================================
+#
+# Install with:
+#   pip install -r requirements.txt
+#
+# These are the core SDK packages needed to interact with AWS services.
+# boto3 is the high-level AWS SDK; botocore is its low-level foundation
+# (pinned here to guarantee compatible error-handling behaviour).
+# =============================================================================
+
+boto3>=1.28.0
+botocore>=1.31.0

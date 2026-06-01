@@ -1,0 +1,18 @@
+# =============================================================================
+# Cost Detective — Example variable values
+# =============================================================================
+# Copy this file to terraform.tfvars and fill in your values:
+#
+#   cp terraform.tfvars.example terraform.tfvars
+#
+# terraform.tfvars is git-ignored (it may hold environment-specific values),
+# so each user maintains their own copy locally.
+# =============================================================================
+
+# Required: SNS recipient for budget and scanner alerts.
+# Confirm the subscription via the email AWS sends after `terraform apply`.
+alert_email = "you@example.com"
+
+# Optional overrides (defaults shown):
+# region       = "eu-west-1"
+# budget_limit = "50"
